@@ -5,7 +5,8 @@ interface Platform {
   url: string;
   name: string;
   pricing: string;
-  description?: string;
+  priceLevel: "FREE" | "$" | "$$" | "$$$" | "$$$$" | "$$$$$";
+  description: string;
   category: "Professional" | "Academic";
 }
 
@@ -24,10 +25,9 @@ interface Testimonial {
 }
 
 function App() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<
-    "Professional" | "Academic" | ""
-  >("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedPriceLevel, setSelectedPriceLevel] = useState<string>("all");
   const [tags, setTags] = useState<Tag[]>(
     [
       // Programming Languages
@@ -67,6 +67,7 @@ function App() {
       url: "https://brilliant.org/subscribe",
       name: "Brilliant",
       pricing: "$10.79/mo",
+      priceLevel: "$",
       description:
         "Interactive STEM and computer science courses with focus on fundamentals",
       category: "Academic",
@@ -75,6 +76,7 @@ function App() {
       url: "https://www.khanacademy.org",
       name: "Khan Academy",
       pricing: "Free",
+      priceLevel: "FREE",
       description:
         "Comprehensive educational platform covering math, science, and computing",
       category: "Academic",
@@ -83,21 +85,250 @@ function App() {
       url: "https://www.pluralsight.com",
       name: "Pluralsight",
       pricing: "$29.00/mo",
+      priceLevel: "$$",
       description:
         "Professional tech skill development and certification preparation",
       category: "Professional",
     },
     {
-      url: "https://www.codingtemple.com",
-      name: "Coding Temple",
-      pricing: "$5,000.00-$14,995.00",
-      description: "Intensive bootcamp focused on career transition into tech",
+      url: "https://www.appacademy.io",
+      name: "App Academy",
+      pricing: "$17,000 or 15% income share",
+      priceLevel: "$$$$",
+      description:
+        "Rigorous full-stack development program with campuses in SF and online options",
       category: "Professional",
     },
     {
-      url: "#",
+      url: "https://extension.berkeley.edu/public/category/courseCategoryCertificateProfile.do?method=load&certificateId=17066&selectedProgramAreaId=11464",
+      name: "UC Berkeley Extension",
+      pricing: "$13,500",
+      priceLevel: "$$$",
+      description:
+        "University-backed coding bootcamp offering full-stack web development",
+      category: "Professional",
+    },
+    {
+      url: "https://www.rithmschool.com",
+      name: "Rithm School",
+      pricing: "$24,000",
+      priceLevel: "$$$$$",
+      description:
+        "Small class sizes bootcamp in SF with real-world project experience",
+      category: "Professional",
+    },
+    {
+      url: "https://generalassemb.ly",
+      name: "General Assembly",
+      pricing: "$15,950",
+      priceLevel: "$$$$",
+      description:
+        "Global tech education provider with SF campus offering software engineering, UX, and data science",
+      category: "Professional",
+    },
+    {
+      url: "https://hackbrightacademy.com",
+      name: "Hackbright Academy",
+      pricing: "$16,895",
+      priceLevel: "$$$$",
+      description:
+        "Engineering school for women with strong emphasis on Python development",
+      category: "Professional",
+    },
+    {
+      url: "https://www.holbertonschool.com",
+      name: "Holberton School",
+      pricing: "Income share agreement",
+      priceLevel: "$$$$",
+      description:
+        "Project-based software engineering school in SF with 2-year curriculum",
+      category: "Professional",
+    },
+    {
+      url: "https://www.techelevator.com",
+      name: "Tech Elevator",
+      pricing: "$15,950",
+      priceLevel: "$$$$",
+      description:
+        "Coding bootcamp focused on Java and .NET with high placement rates",
+      category: "Professional",
+    },
+    {
+      url: "https://www.thinkful.com",
+      name: "Thinkful",
+      pricing: "$16,000 or income share",
+      priceLevel: "$$$$",
+      description:
+        "Online tech bootcamp with strong mentorship and career services",
+      category: "Professional",
+    },
+    {
+      url: "https://www.hackreactor.com",
+      name: "Hack Reactor",
+      pricing: "$17,980",
+      priceLevel: "$$$$",
+      description:
+        "Advanced software engineering bootcamp in SF with focus on full-stack JavaScript",
+      category: "Professional",
+    },
+    {
+      url: "https://flatironschool.com",
+      name: "Flatiron School",
+      pricing: "$16,900",
+      priceLevel: "$$$$",
+      description:
+        "Comprehensive software engineering and data science bootcamp with SF presence",
+      category: "Professional",
+    },
+    {
+      url: "https://www.springboard.com",
+      name: "Springboard",
+      pricing: "$9,900 or income share",
+      priceLevel: "$$$",
+      description:
+        "Online tech bootcamp based in SF with 1:1 mentorship in software engineering and data science",
+      category: "Professional",
+    },
+    {
+      url: "https://www.codingdojo.com",
+      name: "Coding Dojo",
+      pricing: "$16,995",
+      priceLevel: "$$$$",
+      description:
+        "Multi-stack coding bootcamp with SF Bay Area campus, teaching 3 full stacks",
+      category: "Professional",
+    },
+    {
+      url: "https://lambdaschool.com",
+      name: "Lambda School",
+      pricing: "Income share agreement",
+      priceLevel: "$$$$",
+      description:
+        "Remote software engineering program with income share agreement option",
+      category: "Professional",
+    },
+    {
+      url: "https://www.lewagon.com",
+      name: "Le Wagon",
+      pricing: "$14,900",
+      priceLevel: "$$$$",
+      description:
+        "International coding bootcamp with web development and data science tracks",
+      category: "Professional",
+    },
+    {
+      url: "https://www.bloc.io",
+      name: "Bloc",
+      pricing: "$8,500",
+      priceLevel: "$$$",
+      description:
+        "Online bootcamp with flexible scheduling and personalized mentorship",
+      category: "Professional",
+    },
+    {
+      url: "https://www.nucamp.co",
+      name: "Nucamp",
+      pricing: "$2,500",
+      priceLevel: "$$",
+      description:
+        "Affordable coding bootcamp with hybrid learning model in SF Bay Area",
+      category: "Professional",
+    },
+    {
+      url: "https://www.ironhack.com",
+      name: "Ironhack",
+      pricing: "$12,000",
+      priceLevel: "$$$$",
+      description:
+        "Global tech school offering web development, UX/UI, and data analytics",
+      category: "Professional",
+    },
+    {
+      url: "https://www.brainstation.io",
+      name: "BrainStation",
+      pricing: "$15,000",
+      priceLevel: "$$$$",
+      description:
+        "Digital skills bootcamp offering web development, data science, and UX design",
+      category: "Professional",
+    },
+    {
+      url: "https://www.microverse.org",
+      name: "Microverse",
+      pricing: "Income share agreement",
+      priceLevel: "$$$$",
+      description:
+        "Remote software development program with pair programming focus",
+      category: "Professional",
+    },
+    {
+      url: "https://www.alchemycodelab.com",
+      name: "Alchemy Code Lab",
+      pricing: "$18,000",
+      priceLevel: "$$$$$",
+      description:
+        "Advanced software development bootcamp with focus on modern JavaScript",
+      category: "Professional",
+    },
+    {
+      url: "https://www.kenzie.academy",
+      name: "Kenzie Academy",
+      pricing: "Income share agreement",
+      priceLevel: "$$$$",
+      description:
+        "Year-long program combining software engineering with professional skills",
+      category: "Professional",
+    },
+    {
+      url: "https://anyonecanlearntocode.com",
+      name: "Actualize",
+      pricing: "$13,900",
+      priceLevel: "$$$$",
+      description:
+        "Coding bootcamp offering part-time and full-time web development courses",
+      category: "Professional",
+    },
+    {
+      url: "https://careerfoundry.com",
+      name: "CareerFoundry",
+      pricing: "$7,900",
+      priceLevel: "$$$",
+      description:
+        "Online bootcamp with dedicated mentorship in web development and UX/UI",
+      category: "Professional",
+    },
+    {
+      url: "https://skillcrush.com",
+      name: "Skillcrush",
+      pricing: "$2,499",
+      priceLevel: "$$",
+      description:
+        "Online tech skills platform focused on web development and design",
+      category: "Professional",
+    },
+    {
+      url: "https://teamtreehouse.com",
+      name: "Treehouse",
+      pricing: "$199/month",
+      priceLevel: "$",
+      description:
+        "Online learning platform with comprehensive programming courses",
+      category: "Professional",
+    },
+    {
+      url: "https://codifyacademy.com",
+      name: "Codify Academy",
+      pricing: "$14,800",
+      priceLevel: "$$$$",
+      description:
+        "Part-time web development bootcamp with emphasis on front-end development",
+      category: "Professional",
+    },
+    {
+      url: "https://www.codechef.com",
       name: "CodeChef",
       pricing: "$39.00/mo",
+      priceLevel: "$$",
       description: "Competitive programming and algorithmic challenges",
       category: "Academic",
     },
@@ -105,6 +336,7 @@ function App() {
       url: "#",
       name: "HackerRank",
       pricing: "Free",
+      priceLevel: "FREE",
       description: "Technical interview preparation and skill assessment",
       category: "Professional",
     },
@@ -112,6 +344,7 @@ function App() {
       url: "#",
       name: "PyChallenger",
       pricing: "$10.95/mo",
+      priceLevel: "$",
       description: "Python-focused learning with academic approach",
       category: "Academic",
     },
@@ -119,6 +352,7 @@ function App() {
       url: "https://coderbyte.com",
       name: "Coderbyte",
       pricing: "$199.00/mo",
+      priceLevel: "$$",
       description: "Technical assessment and interview preparation platform",
       category: "Professional",
     },
@@ -126,6 +360,7 @@ function App() {
       url: "https://www.codecademy.com",
       name: "Codecademy",
       pricing: "Free",
+      priceLevel: "FREE",
       description:
         "Interactive programming courses for beginners to intermediate",
       category: "Academic",
@@ -134,6 +369,7 @@ function App() {
       url: "https://leetcode.com",
       name: "LeetCode",
       pricing: "$13.25/mo",
+      priceLevel: "$",
       description:
         "Coding interview preparation with focus on algorithms and data structures",
       category: "Professional",
@@ -142,8 +378,72 @@ function App() {
       url: "https://formation.dev/pricing",
       name: "Formation.dev",
       pricing: "$2,500.00/mo",
+      priceLevel: "$$$$",
       description:
         "Elite software engineering interview preparation and mentorship",
+      category: "Professional",
+    },
+    {
+      url: "https://www.devbootcamp.com",
+      name: "Dev Bootcamp",
+      pricing: "$15,950",
+      priceLevel: "$$$$",
+      description:
+        "Pioneer coding bootcamp in SF focusing on full-stack web development",
+      category: "Professional",
+    },
+    {
+      url: "https://www.makeschool.com",
+      name: "Make School",
+      pricing: "Income share agreement",
+      priceLevel: "$$$$",
+      description:
+        "Project-based computer science education with focus on mobile and web development",
+      category: "Professional",
+    },
+    {
+      url: "https://codepath.org",
+      name: "CodePath",
+      pricing: "Free",
+      priceLevel: "FREE",
+      description:
+        "Industry-backed technical training program focusing on mobile and web development",
+      category: "Professional",
+    },
+    {
+      url: "https://www.byteacademy.co",
+      name: "Byte Academy",
+      pricing: "$14,950",
+      priceLevel: "$$$$",
+      description:
+        "Specialized bootcamp offering Python, FinTech and blockchain courses",
+      category: "Professional",
+    },
+    {
+      url: "https://www.fullstackacademy.com",
+      name: "Fullstack Academy",
+      pricing: "$17,910",
+      priceLevel: "$$$$",
+      description:
+        "Immersive software engineering program with focus on JavaScript stack",
+      category: "Professional",
+    },
+    {
+      url: "https://www.techacademy.com",
+      name: "The Tech Academy",
+      pricing: "$11,660",
+      priceLevel: "$$$$",
+      description:
+        "Self-paced coding bootcamp offering multiple programming tracks",
+      category: "Professional",
+    },
+    {
+      url: "https://www.galvanize.com",
+      name: "Galvanize",
+      pricing: "$17,980",
+      priceLevel: "$$$$",
+      description:
+        "Software engineering and data science bootcamp with SF campus and enterprise training",
       category: "Professional",
     },
   ];
@@ -184,21 +484,49 @@ function App() {
     setTags(newTags);
   };
 
-  const filteredPlatforms = platforms.filter(
-    (platform) =>
-      (searchTerm === "" ||
-        platform.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        platform.description
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase())) &&
-      (selectedCategory === "" || platform.category === selectedCategory) &&
-      (tags.every((tag) => !tag.active) ||
+  const filteredPlatforms = platforms
+    .filter((platform) =>
+      searchQuery
+        ? platform.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          platform.description
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase())
+        : true
+    )
+    .filter((platform) =>
+      selectedCategory === "all" ? true : platform.category === selectedCategory
+    )
+    .filter((platform) =>
+      selectedPriceLevel === "all"
+        ? true
+        : platform.priceLevel === selectedPriceLevel
+    )
+    .filter(
+      (platform) =>
+        tags.every((tag) => !tag.active) ||
         tags.some(
           (tag) =>
             tag.active &&
             platform.description?.toLowerCase().includes(tag.name.toLowerCase())
-        ))
-  );
+        )
+    );
+
+  // Calculate metrics
+  const totalSchools = platforms.length;
+  const professionalSchools = platforms.filter(
+    (p) => p.category === "Professional"
+  ).length;
+  const academicSchools = platforms.filter(
+    (p) => p.category === "Academic"
+  ).length;
+  const priceLevels = {
+    FREE: platforms.filter((p) => p.priceLevel === "FREE").length,
+    $: platforms.filter((p) => p.priceLevel === "$").length,
+    $$: platforms.filter((p) => p.priceLevel === "$$").length,
+    $$$: platforms.filter((p) => p.priceLevel === "$$$").length,
+    $$$$: platforms.filter((p) => p.priceLevel === "$$$$").length,
+    $$$$$: platforms.filter((p) => p.priceLevel === "$$$$$").length,
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -257,59 +585,90 @@ function App() {
         </div>
       )}
 
+      {/* Metrics Section */}
+      <div className="bg-white py-8 border-b border-gray-200">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="text-center p-4">
+              <div className="text-3xl font-bold text-indigo-600">
+                {totalSchools}
+              </div>
+              <div className="text-sm text-gray-600">Total Schools</div>
+            </div>
+            <div className="text-center p-4">
+              <div className="text-3xl font-bold text-purple-600">
+                {professionalSchools}
+              </div>
+              <div className="text-sm text-gray-600">Professional Schools</div>
+            </div>
+            <div className="text-center p-4">
+              <div className="text-3xl font-bold text-green-600">
+                {academicSchools}
+              </div>
+              <div className="text-sm text-gray-600">Academic Schools</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Search and Filters */}
       <div className="container mx-auto px-4 py-8">
-        <div className="relative mb-8">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-          <input
-            type="text"
-            placeholder="Search platforms..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-3 text-gray-700">
-            Categories
-          </h2>
-          <div className="flex flex-wrap gap-2 mb-6">
-            <button
-              onClick={() => setSelectedCategory("")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors
-                ${
-                  selectedCategory === ""
-                    ? "bg-indigo-600 text-white"
-                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-                }`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => setSelectedCategory("Professional")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors
-                ${
-                  selectedCategory === "Professional"
-                    ? "bg-purple-600 text-white"
-                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-                }`}
-            >
-              Professional
-            </button>
-            <button
-              onClick={() => setSelectedCategory("Academic")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors
-                ${
-                  selectedCategory === "Academic"
-                    ? "bg-green-600 text-white"
-                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-                }`}
-            >
-              Academic
-            </button>
+        <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-8">
+          {/* Search Input */}
+          <div className="relative flex-grow mb-4 md:mb-0">
+            <input
+              type="text"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              placeholder="Search platforms..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
 
+          {/* Category Filter */}
+          <div className="mb-4 md:mb-0">
+            <select
+              className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="all">All Categories · {totalSchools}</option>
+              <option value="Professional">
+                Professional · {professionalSchools}
+              </option>
+              <option value="Academic">Academic · {academicSchools}</option>
+            </select>
+          </div>
+
+          {/* Price Level Filter */}
+          <div>
+            <select
+              className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              value={selectedPriceLevel}
+              onChange={(e) => setSelectedPriceLevel(e.target.value)}
+            >
+              <option value="all">All Price Ranges · {totalSchools}</option>
+              <option value="FREE" className="text-green-600">
+                Free · {priceLevels["FREE"]}
+              </option>
+              <option value="$">$ Under $3k/year · {priceLevels["$"]}</option>
+              <option value="$$">$$ $3k-$8k/year · {priceLevels["$$"]}</option>
+              <option value="$$$">
+                $$$ $8k-$13k/year · {priceLevels["$$$"]}
+              </option>
+              <option value="$$$$">
+                $$$$ $13k-$20k/year · {priceLevels["$$$$"]}
+              </option>
+              <option value="$$$$$">
+                $$$$$ $20k+/year · {priceLevels["$$$$$"]}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        {/* Topics Filter */}
+        <div className="mb-8">
           <h2 className="text-lg font-semibold mb-3 text-gray-700">
             Popular Topics
           </h2>
@@ -331,7 +690,18 @@ function App() {
           </div>
         </div>
 
-        {/* Platform Cards */}
+        {/* Results Count */}
+        <div className="mb-4">
+          <span className="text-sm font-medium text-gray-600">
+            Found{" "}
+            <span className="text-indigo-600 font-semibold">
+              {filteredPlatforms.length}
+            </span>{" "}
+            {filteredPlatforms.length === 1 ? "result" : "results"}
+          </span>
+        </div>
+
+        {/* Platform Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPlatforms.map((platform) => (
             <div
@@ -366,6 +736,15 @@ function App() {
                 <div className="mb-4">
                   <span className="inline-block bg-indigo-100 text-indigo-800 text-sm font-medium px-2.5 py-0.5 rounded">
                     {platform.pricing}
+                  </span>
+                  <span
+                    className={`inline-block ml-2 text-sm font-medium ${
+                      platform.priceLevel === "FREE"
+                        ? "text-green-600"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    {platform.priceLevel}
                   </span>
                 </div>
                 {platform.description && (
