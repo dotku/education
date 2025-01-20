@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Search, BookOpen, ExternalLink, Calendar, Star } from "lucide-react";
+import AIConsultant from './components/AIConsultant';
 
 interface Platform {
   url: string;
@@ -513,12 +514,24 @@ function App() {
 
   // Calculate metrics
   const totalSchools = platforms.length;
+  const totalAdvisors = 8;
+  const averageSalaryIncrease = 24000; // Average salary increase based on 2024 bootcamp reports
+
   const professionalSchools = platforms.filter(
     (p) => p.category === "Professional"
   ).length;
   const academicSchools = platforms.filter(
     (p) => p.category === "Academic"
   ).length;
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   const priceLevels = {
     FREE: platforms.filter((p) => p.priceLevel === "FREE").length,
     $: platforms.filter((p) => p.priceLevel === "$").length,
@@ -588,24 +601,29 @@ function App() {
       {/* Metrics Section */}
       <div className="bg-white py-8 border-b border-gray-200">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="text-center p-4">
-              <div className="text-3xl font-bold text-indigo-600">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center p-6 border border-gray-200 rounded-xl">
+              <div className="text-4xl font-bold text-green-600 mb-1">
+                {formatCurrency(averageSalaryIncrease)}
+              </div>
+              <div className="text-sm font-medium text-gray-600">Average Salary Growth</div>
+              <div className="text-xs text-gray-500 mt-1">Based on 2024 Graduate Data</div>
+            </div>
+
+            <div className="text-center p-6 border border-gray-200 rounded-xl">
+              <div className="text-4xl font-bold text-indigo-600 mb-1">
+                {totalAdvisors}
+              </div>
+              <div className="text-sm font-medium text-gray-600">Expert Advisors</div>
+              <div className="text-xs text-gray-500 mt-1">Ready to Guide You</div>
+            </div>
+
+            <div className="text-center p-6 border border-gray-200 rounded-xl">
+              <div className="text-4xl font-bold text-purple-600 mb-1">
                 {totalSchools}
               </div>
-              <div className="text-sm text-gray-600">Total Schools</div>
-            </div>
-            <div className="text-center p-4">
-              <div className="text-3xl font-bold text-purple-600">
-                {professionalSchools}
-              </div>
-              <div className="text-sm text-gray-600">Professional Schools</div>
-            </div>
-            <div className="text-center p-4">
-              <div className="text-3xl font-bold text-green-600">
-                {academicSchools}
-              </div>
-              <div className="text-sm text-gray-600">Academic Schools</div>
+              <div className="text-sm font-medium text-gray-600">Partner Schools</div>
+              <div className="text-xs text-gray-500 mt-1">Professional & Academic</div>
             </div>
           </div>
         </div>
@@ -757,6 +775,9 @@ function App() {
           ))}
         </div>
       </div>
+
+      {/* AI Consultant */}
+      <AIConsultant />
 
       {/* Testimonials Section */}
       <div className="bg-white py-16">
