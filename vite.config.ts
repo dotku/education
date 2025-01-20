@@ -18,14 +18,8 @@ export default defineConfig({
     },
   },
   build: {
-    target: 'esnext',
     outDir: 'dist',
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
-        },
-      },
-    },
-  },
+    emptyOutDir: true,
+    sourcemap: true
+  }
 })
