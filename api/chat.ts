@@ -1,55 +1,70 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import OpenAI from 'openai';
-import { config } from 'dotenv';
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+import OpenAI from "openai";
+import { config as dotenvConfig } from "dotenv";
+import path from "path";
+import fs from "fs";
 
-// Load environment variables from .env.local in development
-if (process.env.VERCEL_ENV !== 'production') {
-  config({ path: '.env.local' });
+// Try multiple possible paths for .env.local
+const envPaths = [
+  '.env.local',           // Current directory
+  '../.env.local',        // Parent directory
+  '.env',                 // Fallback to .env in current directory
+  '../.env',             // Fallback to .env in parent directory
+];
+
+if (process.env.VERCEL_ENV !== "production") {
+  // Try each path until we find one that exists
+  for (const envPath of envPaths) {
+    const absolutePath = path.resolve(__dirname, envPath);
+    try {
+      if (fs.existsSync(absolutePath)) {
+        dotenvConfig({ path: absolutePath });
+        console.log('Loaded env from:', absolutePath);
+        break;
+      }
+    } catch (error) {
+      console.log('Failed to load env from:', absolutePath);
+    }
+  }
 }
+
+console.log("process.env", process.env);
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
     const { messages } = req.body;
 
-    if (!messages || !Array.isArray(messages)) {
-      return res.status(400).json({ error: 'Invalid messages format' });
+    if (!Array.isArray(messages)) {
+      return res.status(400).json({ error: "Messages must be an array" });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: 'OpenAI API key not configured' });
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: messages,
+    });
+
+    return res.status(200).json({
+      message: completion.choices[0].message,
+    });
+  } catch (error: unknown) {
+    console.error("Error in chat API:", error);
+
+    if (error instanceof Error) {
+      return res.status(500).json({ error: error.message });
     }
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4-1106-preview",
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert education consultant specializing in tech education and bootcamps. Help users find the right educational path based on their goals, experience, and constraints. Be concise but informative."
-        },
-        ...messages
-      ],
-      temperature: 0.7,
-      max_tokens: 500,
-    });
-
-    res.json({ message: response.choices[0].message.content });
-  } catch (error) {
-    console.error('Chat API Error:', error);
-    res.status(500).json({ 
-      error: 'Failed to process chat request',
-      details: process.env.VERCEL_ENV === 'development' ? error.message : undefined
-    });
+    return res.status(500).json({ error: "An unexpected error occurred" });
   }
 }

@@ -14,6 +14,7 @@ export default function AIConsultant() {
   const [isLoading, setIsLoading] = useState(false);
   const [isServerHealthy, setIsServerHealthy] = useState(true);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatWindowRef = useRef<HTMLDivElement>(null);
 
@@ -69,11 +70,16 @@ export default function AIConsultant() {
     e.preventDefault();
     if (!input.trim() || isLoading || !isServerHealthy) return;
 
-    const userMessage = input.trim();
-    const newMessage: Message = { role: 'user', content: userMessage };
-    setMessages(prev => [...prev, newMessage]);
-    setInput('');
     setIsLoading(true);
+    setErrorMessage(null);
+
+    const userMessage: Message = {
+      role: 'user',
+      content: input.trim()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
 
     try {
       // Wait for healthy server before proceeding
@@ -88,34 +94,25 @@ export default function AIConsultant() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: [...messages, newMessage].map(msg => ({
-            role: msg.role,
-            content: msg.content
-          })),
+          messages: [...messages, userMessage]
         }),
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to get response');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to get response');
       }
 
       const data = await response.json();
-      if (!data.message) {
-        throw new Error('Invalid response format');
-      }
-
-      setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
-    } catch (error) {
-      console.error('Chat Error:', error);
-      setMessages(prev => [
-        ...prev,
-        { 
-          role: 'assistant', 
-          content: 'Sorry, I encountered an error. Please try again or refresh the page.' 
-        }
-      ]);
-      setServerError(error.message);
+      
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: data.message
+      }]);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred while processing your request';
+      setErrorMessage(message);
+      console.error('Chat error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -202,6 +199,11 @@ export default function AIConsultant() {
                 <div className="w-1 h-1 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
               </div>
             </div>
+          </div>
+        )}
+        {errorMessage && (
+          <div className="bg-red-100 p-4 rounded-lg">
+            <p className="text-red-600">{errorMessage}</p>
           </div>
         )}
         <div ref={messagesEndRef} />
