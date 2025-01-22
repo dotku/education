@@ -50,7 +50,7 @@ export default function AIConsultant() {
         setIsServerHealthy(health.status === 'healthy');
         setServerError(health.lastError);
       })
-      .catch(error => {
+      .catch(() => {
         setIsServerHealthy(false);
         setServerError('Server health check failed');
       });
